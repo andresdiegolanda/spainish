@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: spainish-backend
+Globals:
+  Function:
+    Timeout: 20
+    MemorySize: 512
+    LoggingConfig:
+      LogFormat: JSON
+Resources:
+  PingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: PingFunction
+      Handler: com.spainish.api.PingHandler::handleRequest
+      Runtime: java21
+      Architectures:
+      - x86_64
+      MemorySize: 512
+      Environment:
+        Variables:
+          PARAM1: VALUE
+      Events:
+        Ping:
+          Type: Api
+          Properties:
+            Path: /ping
+            Method: get
+    Metadata:
+      SamResourceId: PingFunction
+Outputs:
+  PingApi:
+    Description: API Gateway endpoint URL for Prod stage for Ping function
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/ping/
+  PingFunction:
+    Description: Ping Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - PingFunction
+      - Arn
+  PingFunctionIamRole:
+    Description: Implicit IAM Role created for Ping function
+    Value:
+      Fn::GetAtt:
+      - PingFunctionRole
+      - Arn
