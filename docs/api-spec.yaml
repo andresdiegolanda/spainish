@@ -1,0 +1,83 @@
+openapi: 3.0.3
+info:
+  title: spainish.chat API
+  version: 0.1.0
+paths:
+  /student/{id}/profile:
+    get:
+      summary: Fetch student profile and learning goals
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Student profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentProfile'
+
+  /session/start:
+    post:
+      summary: Create a new learning session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                studentId: { type: string }
+      responses:
+        '200':
+          description: Session created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessionId: { type: string }
+
+  /session/{id}/log:
+    post:
+      summary: Log a message exchange or correction
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userMessage: { type: string }
+                aiReply: { type: string }
+                mistakes:
+                  type: array
+                  items: { type: string }
+      responses:
+        '200':
+          description: Log stored
+
+  /session/{id}/end:
+    post:
+      summary: Mark session complete and trigger analysis
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Session closed
+components:
+  schemas:
+    StudentProfile:
+      type: object
+      properties:
+        name: { type: string }
+        level: { type: string, enum: [beginner, intermediate, advanced] }
+        goals: { type: array, items: { type: string } }
